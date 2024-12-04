@@ -123,6 +123,38 @@ class ParkingBoyTest {
         assertTrue(status.get(2).isEmpty());
     }
 
+    @Test
+    void should_park_car_using_license_plate_number() {
+        // Given
+        ParkingLot parkingLot1 = new ParkingLot(1, "Lot 1", 10);
+        ParkingLot parkingLot2 = new ParkingLot(2, "Lot 2", 10);
+        ParkingBoy parkingBoy = new ParkingBoy(List.of(parkingLot1, parkingLot2));
+        String plateNumber = "ABC123";
+        // When
+        Ticket ticket = parkingBoy.park(plateNumber);
+        // Then
+        assertNotNull(ticket);
+        assertEquals(plateNumber, ticket.plateNumber());
+        assertEquals(1, parkingBoy.getParkingLotsStatus().get(1).size());
+        assertEquals(plateNumber, parkingBoy.getParkingLotsStatus().get(1).get(1));
+    }
+
+    @Test
+    void should_fetch_car_using_license_plate_number() {
+        // Given
+        ParkingLot parkingLot1 = new ParkingLot(1, "Lot 1", 10);
+        ParkingLot parkingLot2 = new ParkingLot(2, "Lot 2", 10);
+        ParkingBoy parkingBoy = new ParkingBoy(List.of(parkingLot1, parkingLot2));
+        String plateNumber = "ABC123";
+        parkingBoy.park(plateNumber);
+        // When
+        Car fetchedCar = parkingBoy.fetch(plateNumber);
+        // Then
+        assertNotNull(fetchedCar);
+        assertEquals(plateNumber, fetchedCar.plateNumber());
+        assertTrue(parkingBoy.getParkingLotsStatus().get(1).isEmpty());
+    }
+
 
 
 

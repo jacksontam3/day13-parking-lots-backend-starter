@@ -136,6 +136,34 @@ class ParkingLotTest {
         assertTrue(status.isEmpty());
     }
 
+    @Test
+    void should_park_car_using_license_plate_number() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot();
+        String plateNumber = "ABC123";
+        // When
+        Ticket ticket = parkingLot.park(plateNumber);
+        // Then
+        assertNotNull(ticket);
+        assertEquals(plateNumber, ticket.plateNumber());
+        assertEquals(1, parkingLot.getParkingStatus().size());
+        assertEquals(plateNumber, parkingLot.getParkingStatus().get(1));
+    }
+
+    @Test
+    void should_fetch_car_using_license_plate_number() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot();
+        String plateNumber = "ABC123";
+        parkingLot.park(plateNumber);
+        // When
+        Car fetchedCar = parkingLot.fetch(plateNumber);
+        // Then
+        assertNotNull(fetchedCar);
+        assertEquals(plateNumber, fetchedCar.plateNumber());
+        assertTrue(parkingLot.getParkingStatus().isEmpty());
+    }
+
 
 
 }

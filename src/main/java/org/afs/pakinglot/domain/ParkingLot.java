@@ -3,6 +3,7 @@ package org.afs.pakinglot.domain;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.afs.pakinglot.domain.exception.NoAvailablePositionException;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
@@ -47,6 +48,10 @@ public class ParkingLot {
         return ticket;
     }
 
+    public Ticket park(String plateNumber) {
+        return park(new Car(plateNumber));
+    }
+
     public boolean isFull() {
         return capacity == tickets.size();
     }
@@ -57,6 +62,18 @@ public class ParkingLot {
         }
 
         return tickets.remove(ticket);
+    }
+
+    public Car fetch(String plateNumber) {
+        Optional<Map.Entry<Ticket, Car>> entry = tickets.entrySet().stream()
+                .filter(e -> e.getValue().plateNumber().equals(plateNumber))
+                .findFirst();
+
+        if (entry.isEmpty()) {
+            throw new UnrecognizedTicketException();
+        }
+
+        return tickets.remove(entry.get().getKey());
     }
 
     public boolean contains(Ticket ticket) {
