@@ -1,8 +1,9 @@
 package org.afs.pakinglot.domain;
 
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.afs.pakinglot.domain.strategies.ParkingStrategy;
 import org.afs.pakinglot.domain.strategies.SequentiallyStrategy;
@@ -30,9 +31,17 @@ public class ParkingBoy {
 
     public Car fetch(Ticket ticket) {
         ParkingLot parkingLotOfTheTicket = parkingLots.stream()
-            .filter(parkingLot -> parkingLot.contains(ticket))
-            .findFirst()
-            .orElseThrow(UnrecognizedTicketException::new);
+                .filter(parkingLot -> parkingLot.contains(ticket))
+                .findFirst()
+                .orElseThrow(UnrecognizedTicketException::new);
         return parkingLotOfTheTicket.fetch(ticket);
+    }
+
+    public Map<Integer, Map<Integer, String>> getParkingLotsStatus() {
+        return parkingLots.stream()
+                .collect(Collectors.toMap(
+                        ParkingLot::getId,
+                        ParkingLot::getParkingStatus
+                ));
     }
 }

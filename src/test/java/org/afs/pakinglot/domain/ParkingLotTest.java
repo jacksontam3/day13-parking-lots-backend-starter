@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Map;
+
 import org.afs.pakinglot.domain.exception.NoAvailablePositionException;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.junit.jupiter.api.Test;
@@ -107,5 +109,33 @@ class ParkingLotTest {
         assertNotNull(tickets);
         assertTrue(expectedTickets.containsAll(tickets));
     }
+
+    @Test
+    void should_return_parking_status_with_license_plates() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot();
+        Car car1 = new Car("ABC123");
+        Car car2 = new Car("XYZ789");
+        parkingLot.park(car1);
+        parkingLot.park(car2);
+        // When
+        Map<Integer, String> status = parkingLot.getParkingStatus();
+        // Then
+        assertEquals(2, status.size());
+        assertEquals("ABC123", status.get(1));
+        assertEquals("XYZ789", status.get(2));
+    }
+
+    @Test
+    void should_return_empty_status_when_no_cars_parked() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot();
+        // When
+        Map<Integer, String> status = parkingLot.getParkingStatus();
+        // Then
+        assertTrue(status.isEmpty());
+    }
+
+
 
 }

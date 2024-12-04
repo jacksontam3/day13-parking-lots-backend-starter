@@ -1,9 +1,9 @@
 package org.afs.pakinglot.domain;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.afs.pakinglot.domain.exception.NoAvailablePositionException;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 
@@ -79,4 +79,11 @@ public class ParkingLot {
         return tickets.keySet().stream().toList();
     }
 
+    public Map<Integer, String> getParkingStatus() {
+        return tickets.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().position(),
+                        entry -> entry.getValue().plateNumber()
+                ));
+    }
 }

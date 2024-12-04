@@ -5,6 +5,7 @@ import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -90,4 +91,39 @@ class ParkingBoyTest {
         // Then
         assertThrows(NoAvailablePositionException.class, () -> parkingBoy.park(car));
     }
+
+    @Test
+    void should_return_aggregated_parking_lots_status() {
+        // Given
+        ParkingLot parkingLot1 = new ParkingLot(1, "Lot 1", 10);
+        ParkingLot parkingLot2 = new ParkingLot(2, "Lot 2", 10);
+        Car car1 = new Car("ABC123");
+        Car car2 = new Car("XYZ789");
+        parkingLot1.park(car1);
+        parkingLot2.park(car2);
+        ParkingBoy parkingBoy = new ParkingBoy(List.of(parkingLot1, parkingLot2));
+        // When
+        Map<Integer, Map<Integer, String>> status = parkingBoy.getParkingLotsStatus();
+        // Then
+        assertEquals(2, status.size());
+        assertEquals("ABC123", status.get(1).get(1));
+        assertEquals("XYZ789", status.get(2).get(1));
+    }
+
+    @Test
+    void should_return_empty_status_when_no_cars_parked_in_any_lot() {
+        // Given
+        ParkingLot parkingLot1 = new ParkingLot(1, "Lot 1", 10);
+        ParkingLot parkingLot2 = new ParkingLot(2, "Lot 2", 10);
+        ParkingBoy parkingBoy = new ParkingBoy(List.of(parkingLot1, parkingLot2));
+        // When
+        Map<Integer, Map<Integer, String>> status = parkingBoy.getParkingLotsStatus();
+        // Then
+        assertTrue(status.get(1).isEmpty());
+        assertTrue(status.get(2).isEmpty());
+    }
+
+
+
+
 }
