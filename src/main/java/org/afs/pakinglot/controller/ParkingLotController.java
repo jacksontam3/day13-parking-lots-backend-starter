@@ -38,7 +38,7 @@ public class ParkingLotController {
 
     @PostMapping("/park")
     public ResponseEntity<Ticket> park(@RequestBody ParkingLotDto parkingLotDto) {
-        Ticket ticket = parkingManager.park(parkingLotDto.getStrategyType(), parkingLotDto.getPlateNumber());
+        Ticket ticket = parkingManager.park(parkingLotDto.getParkingStrategyType(), parkingLotDto.getPlateNumber());
         return ResponseEntity.ok(ticket);
     }
 

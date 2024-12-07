@@ -1,9 +1,10 @@
 package org.afs.pakinglot.domain;
+
 import org.afs.pakinglot.domain.enums.ParkingStrategyType;
 
 public class ParkingLotDto {
-    String plateNumber;
-    ParkingStrategyType parkingStrategyType;
+    private String plateNumber;
+    private ParkingStrategyType parkingStrategyType;
 
     public ParkingLotDto(String plateNumber) {
         this.plateNumber = plateNumber;
@@ -21,7 +22,19 @@ public class ParkingLotDto {
         return plateNumber;
     }
 
-    public ParkingStrategyType getStrategyType() {
+    public void setPlateNumber(String plateNumber) {
+        this.plateNumber = plateNumber;
+    }
+
+    public ParkingStrategyType getParkingStrategyType() {
         return parkingStrategyType;
+    }
+
+    public void setParkingStrategyType(ParkingStrategyType parkingStrategyType) {
+        this.parkingStrategyType = parkingStrategyType;
+    }
+
+    public void setParkingStrategyType(String parkingStrategyType) {
+        this.parkingStrategyType = ParkingStrategyType.valueOf(parkingStrategyType.toUpperCase());
     }
 }
