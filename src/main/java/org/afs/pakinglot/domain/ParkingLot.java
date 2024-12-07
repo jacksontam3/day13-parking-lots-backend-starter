@@ -103,4 +103,11 @@ public class ParkingLot {
                         entry -> entry.getValue().plateNumber()
                 ));
     }
+
+    public Ticket findTicketByPlateNumber(String plateNumber) {
+        return tickets.keySet().stream()
+                .filter(ticket -> ticket.plateNumber().equals(plateNumber))
+                .findFirst()
+                .orElseThrow(UnrecognizedTicketException::new);
+    }
 }

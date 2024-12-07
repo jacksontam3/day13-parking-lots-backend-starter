@@ -58,4 +58,8 @@ public class ParkingBoy {
                         ParkingLot::getParkingStatus
                 ));
     }
+
+    public List<ParkingLot> getParkingLots() {
+        return parkingLots;
+    }
 }
