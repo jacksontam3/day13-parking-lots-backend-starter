@@ -108,6 +108,6 @@ public class ParkingLot {
         return tickets.keySet().stream()
                 .filter(ticket -> ticket.plateNumber().equals(plateNumber))
                 .findFirst()
-                .orElseThrow(UnrecognizedTicketException::new);
+                .orElse(null);
     }
 }

@@ -22,3 +22,16 @@ it should support the selection of a specific parking boy for parking or fetchin
 the parking boy will complete the operation based on their designated parking strategy.
 
 prompt 6:
+
+---
+
+**Controller**
+
+Please help me generate a `ParkingLotController` class that allows me to call the `park` and `fetch` methods you created in `ParkingManager`. First, help me generate 4 interfaces:
+
+1. **Get the status of all parking lots**: Returns a `ResponseEntity` containing a `List`. Each element in the list includes the parking lot ID, parking lot name, and the remaining parking spaces in that parking lot. This is a GET request with the path `/parkinglot`.
+
+2. **Park a car based on plate number and parking strategy (STANDARD, SMART, SUPER)**: Returns a `ResponseEntity` containing a `Ticket`. This is a POST request with the path `/parkinglot/park`.
+
+3. **Fetch a car based on plate number**: Returns a `ResponseEntity` containing a `Car`. This is a POST request with the path `/parkinglot/fetch`.
+
