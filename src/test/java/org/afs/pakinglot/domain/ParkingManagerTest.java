@@ -1,70 +1,107 @@
 package org.afs.pakinglot.domain;
 
+import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParkingManagerTest {
 
     private ParkingManager parkingManager;
-    private ParkingBoy parkingBoy1;
-    private ParkingBoy parkingBoy2;
 
     @BeforeEach
     void setUp() {
         parkingManager = new ParkingManager();
-        parkingBoy1 = new ParkingBoy(List.of(new ParkingLot(1, "Lot 1", 10)));
-        parkingBoy2 = new ParkingBoy(List.of(new ParkingLot(2, "Lot 2", 10)));
-        parkingManager.addParkingBoy(1, parkingBoy1);
-        parkingManager.addParkingBoy(2, parkingBoy2);
     }
 
     @Test
-    void testParkCar() {
-        // Given
+    void should_return_ticket_given_standard_strategy_when_park_then_success() {
         String plateNumber = "ABC123";
-
-        // When
-        Ticket ticket = parkingManager.park(1, plateNumber);
-
-        // Then
+        Ticket ticket = parkingManager.park("STANDARD", plateNumber);
         assertNotNull(ticket);
-        assertEquals(plateNumber, ticket.plateNumber());
-        assertEquals(1, ticket.parkingLot());
     }
 
     @Test
-    void testFetchCar() {
+    void should_return_ticket_given_smart_strategy_when_park_then_success() {
+        String plateNumber = "DEF456";
+        Ticket ticket = parkingManager.park("SMART", plateNumber);
+        assertNotNull(ticket);
+    }
+
+    @Test
+    void should_return_ticket_given_super_strategy_when_park_then_success() {
+        String plateNumber = "GHI789";
+        Ticket ticket = parkingManager.park("SUPER", plateNumber);
+        assertNotNull(ticket);
+    }
+
+    @Test
+    void should_throw_exception_given_invalid_strategy_when_park_then_fail() {
+        String plateNumber = "JKL012";
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            parkingManager.park("INVALID", plateNumber);
+        });
+        assertEquals("Invalid parking strategy type: INVALID", exception.getMessage());
+    }
+
+    @Test
+    void should_throw_exception_given_null_strategy_when_park_then_fail() {
+        String plateNumber = "MNO345";
+        Exception exception = assertThrows(Exception.class, () -> {
+            parkingManager.park(null, plateNumber);
+        });
+        assertEquals("Invalid parking strategy type: null", exception.getMessage());
+    }
+
+    @Test
+    void should_throw_exception_given_empty_strategy_when_park_then_fail() {
+        String plateNumber = "PQR678";
+        Exception exception = assertThrows(Exception.class, () -> {
+            parkingManager.park("", plateNumber);
+        });
+        assertEquals("Invalid parking strategy type: ", exception.getMessage());
+    }
+
+    @Test
+    void should_return_car_given_valid_ticket_when_fetch_then_success() {
         // Given
         String plateNumber = "ABC123";
-        Ticket ticket = parkingManager.park(1, plateNumber);
-
+        Ticket ticket = parkingManager.park("STANDARD", plateNumber);
         // When
-        Car fetchedCar = parkingManager.fetch(1, plateNumber);
-
+        Car car = parkingManager.fetch(ticket);
         // Then
-        assertNotNull(fetchedCar);
-        assertEquals(plateNumber, fetchedCar.plateNumber());
+        assertNotNull(car);
+        assertEquals(plateNumber, car.plateNumber());
     }
 
     @Test
-    void testParkCarWithInvalidParkingBoy() {
+    void should_throw_exception_given_invalid_ticket_when_fetch_then_fail() {
         // Given
-        String plateNumber = "XYZ789";
-
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () -> parkingManager.park(3, plateNumber));
+        Ticket invalidTicket = new Ticket("INVALID", 1, 1);
+        // When
+        // Then
+        assertThrows(UnrecognizedTicketException.class, () -> parkingManager.fetch(invalidTicket));
     }
 
     @Test
-    void testFetchCarWithInvalidParkingBoy() {
+    void should_throw_exception_given_null_ticket_when_fetch_then_fail() {
         // Given
-        String plateNumber = "XYZ789";
-
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () -> parkingManager.fetch(3, plateNumber));
+        Ticket nullTicket = null;
+        // When
+        // Then
+        assertThrows(UnrecognizedTicketException.class, () -> parkingManager.fetch(nullTicket));
     }
+
+    @Test
+    void should_throw_exception_given_used_ticket_when_fetch_then_fail() {
+        // Given
+        String plateNumber = "DEF456";
+        Ticket ticket = parkingManager.park("SMART", plateNumber);
+        parkingManager.fetch(ticket); // Use the ticket once
+        // When
+        // Then
+        assertThrows(UnrecognizedTicketException.class, () -> parkingManager.fetch(ticket));
+    }
+
 }
