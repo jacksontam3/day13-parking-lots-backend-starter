@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
+import org.afs.pakinglot.domain.enums.ParkingStrategyType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -41,16 +41,16 @@ public class ParkingManager {
         return parkingBoys.get(id);
     }
 
-    public Ticket park(String strategyType, String plateNumber) {
+    public Ticket park(ParkingStrategyType parkingStrategyType, String plateNumber) {
         Car car = new Car(plateNumber);
-        if (strategyType == null) {
+        if (parkingStrategyType == null) {
             throw new IllegalArgumentException("Invalid parking strategy type: null");
         }
-        return switch (strategyType.toUpperCase()) {
-            case "STANDARD" -> standardParkingBoy.park(car);
-            case "SMART" -> smartParkingBoy.park(car);
-            case "SUPER" -> superParkingBoy.park(car);
-            default -> throw new IllegalArgumentException("Invalid parking strategy type: " + strategyType);
+        return switch (parkingStrategyType) {
+            case STANDARD -> standardParkingBoy.park(car);
+            case SMART -> smartParkingBoy.park(car);
+            case SUPER_SMART -> superParkingBoy.park(car);
+            default -> throw new IllegalArgumentException("Invalid parking strategy type: " + parkingStrategyType);
         };
     }
 
@@ -72,12 +72,8 @@ public class ParkingManager {
     }
 
     public Ticket findTicketByPlateNumber(String plateNumber) {
-        return Stream.of(standardParkingBoy, smartParkingBoy, superParkingBoy)
-                .map(parkingBoy -> parkingBoy.getParkingLots().stream()
-                        .map(parkingLot -> parkingLot.findTicketByPlateNumber(plateNumber))
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElse(null))
+        return standardParkingBoy.getParkingLots().stream()
+                .map(parkingLot -> parkingLot.findTicketByPlateNumber(plateNumber))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(UnrecognizedTicketException::new);

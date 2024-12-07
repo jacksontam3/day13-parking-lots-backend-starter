@@ -1,5 +1,6 @@
 package org.afs.pakinglot.domain;
 
+import org.afs.pakinglot.domain.enums.ParkingStrategyType;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,21 +19,21 @@ class ParkingManagerTest {
     @Test
     void should_return_ticket_given_standard_strategy_when_park_then_success() {
         String plateNumber = "ABC123";
-        Ticket ticket = parkingManager.park("STANDARD", plateNumber);
+        Ticket ticket = parkingManager.park(ParkingStrategyType.STANDARD, plateNumber);
         assertNotNull(ticket);
     }
 
     @Test
-    void should_return_ticket_given_smart_strategy_when_park_then_success() {
+    void should_return_ticket_given_SMART_strategy_when_park_then_success() {
         String plateNumber = "DEF456";
-        Ticket ticket = parkingManager.park("SMART", plateNumber);
+        Ticket ticket = parkingManager.park(ParkingStrategyType.SMART, plateNumber);
         assertNotNull(ticket);
     }
 
     @Test
     void should_return_ticket_given_super_strategy_when_park_then_success() {
         String plateNumber = "GHI789";
-        Ticket ticket = parkingManager.park("SUPER", plateNumber);
+        Ticket ticket = parkingManager.park(ParkingStrategyType.SUPER_SMART, plateNumber);
         assertNotNull(ticket);
     }
 
@@ -40,9 +41,9 @@ class ParkingManagerTest {
     void should_throw_exception_given_invalid_strategy_when_park_then_fail() {
         String plateNumber = "JKL012";
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            parkingManager.park("INVALID", plateNumber);
+            parkingManager.park(ParkingStrategyType.valueOf("INVALID"), plateNumber);
         });
-        assertEquals("Invalid parking strategy type: INVALID", exception.getMessage());
+        assertEquals("No enum constant org.afs.pakinglot.domain.enums.ParkingStrategyType.INVALID", exception.getMessage());
     }
 
     @Test
@@ -58,16 +59,16 @@ class ParkingManagerTest {
     void should_throw_exception_given_empty_strategy_when_park_then_fail() {
         String plateNumber = "PQR678";
         Exception exception = assertThrows(Exception.class, () -> {
-            parkingManager.park("", plateNumber);
+            parkingManager.park(ParkingStrategyType.valueOf(""), plateNumber);
         });
-        assertEquals("Invalid parking strategy type: ", exception.getMessage());
+        assertEquals("No enum constant org.afs.pakinglot.domain.enums.ParkingStrategyType.", exception.getMessage());
     }
 
     @Test
     void should_return_car_given_valid_ticket_when_fetch_then_success() {
         // Given
         String plateNumber = "ABC123";
-        Ticket ticket = parkingManager.park("STANDARD", plateNumber);
+        Ticket ticket = parkingManager.park(ParkingStrategyType.STANDARD, plateNumber);
         // When
         Car car = parkingManager.fetch(ticket);
         // Then
@@ -97,7 +98,7 @@ class ParkingManagerTest {
     void should_throw_exception_given_used_ticket_when_fetch_then_fail() {
         // Given
         String plateNumber = "DEF456";
-        Ticket ticket = parkingManager.park("SMART", plateNumber);
+        Ticket ticket = parkingManager.park(ParkingStrategyType.SMART, plateNumber);
         parkingManager.fetch(ticket); // Use the ticket once
         // When
         // Then

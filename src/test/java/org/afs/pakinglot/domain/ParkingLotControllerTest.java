@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.afs.pakinglot.controller.ParkingLotController;
+import org.afs.pakinglot.domain.enums.ParkingStrategyType;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.afs.pakinglot.domain.strategies.SequentiallyStrategy;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,13 +57,13 @@ class ParkingLotControllerTest {
     @Test
     void should_return_ticket_given_valid_strategy_and_plate_number_when_park_then_success() {
         // Given
-        String strategyType = "STANDARD";
         String plateNumber = "ABC123";
         Ticket ticket = new Ticket(plateNumber, 1, 1);
-        when(parkingManager.park(strategyType, plateNumber)).thenReturn(ticket);
+        when(parkingManager.park(ParkingStrategyType.STANDARD, plateNumber)).thenReturn(ticket);
+        ParkingLotDto parkingLotDto = new ParkingLotDto(plateNumber, ParkingStrategyType.STANDARD);
 
         // When
-        ResponseEntity<Ticket> response = parkingLotController.park(strategyType, plateNumber);
+        ResponseEntity<Ticket> response = parkingLotController.park(parkingLotDto);
 
         // Then
         assertNotNull(response);
@@ -78,9 +79,10 @@ class ParkingLotControllerTest {
         Car car = new Car(plateNumber);
         when(parkingManager.findTicketByPlateNumber(plateNumber)).thenReturn(ticket);
         when(parkingManager.fetch(ticket)).thenReturn(car);
+        ParkingLotDto parkingLotDto = new ParkingLotDto(plateNumber);
 
         // When
-        ResponseEntity<Car> response = parkingLotController.fetch(plateNumber);
+        ResponseEntity<Car> response = parkingLotController.fetch(parkingLotDto);
 
         // Then
         assertNotNull(response);
@@ -93,9 +95,9 @@ class ParkingLotControllerTest {
         // Given
         String plateNumber = "INVALID";
         when(parkingManager.findTicketByPlateNumber(plateNumber)).thenThrow(UnrecognizedTicketException.class);
-
+        ParkingLotDto parkingLotDto = new ParkingLotDto(plateNumber);
         // When
         // Then
-        assertThrows(UnrecognizedTicketException.class, () -> parkingLotController.fetch(plateNumber));
+        assertThrows(UnrecognizedTicketException.class, () -> parkingLotController.fetch(parkingLotDto));
     }
 }
